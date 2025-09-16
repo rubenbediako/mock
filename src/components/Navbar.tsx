@@ -11,6 +11,7 @@ export default function Navbar() {
           width={48}
           height={48}
           className="rounded-full"
+          unoptimized
         />
         <span className="text-3xl font-extrabold text-blue-700 tracking-tight">
           DAS MOCK

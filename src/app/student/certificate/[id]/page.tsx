@@ -28,7 +28,7 @@ export default function CertificatePage({ params }: { params: { id: string } }) 
   const data = mockCertificateData[params.id as keyof typeof mockCertificateData];
 
   const handlePrint = useReactToPrint({
-    content: () => certificateRef.current,
+    content: () => certificateRef.current as unknown as HTMLElement,
   });
 
   if (!data) {

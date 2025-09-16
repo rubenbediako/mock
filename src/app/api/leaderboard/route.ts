@@ -9,7 +9,9 @@ export async function GET() {
   const studentScores: Record<string, { name: string; totalScore: number; examsTaken: number }> = {};
 
   for (const exam of exams) {
-    for (const submission of exam.submissions || []) {
+    // If exam.submissions does not exist, skip
+    if (!('submissions' in exam) || !Array.isArray((exam as any).submissions)) continue;
+    for (const submission of (exam as any).submissions) {
       const { studentName, score } = submission;
       if (!studentScores[studentName]) {
         studentScores[studentName] = { name: studentName, totalScore: 0, examsTaken: 0 };
