@@ -32,15 +32,31 @@ const mockCriteria = {
   q2: 'The correct answer is 4.',
 };
 
+interface Submission {
+  id: string;
+  studentName: string;
+  examTitle: string;
+  answers: Array<{ questionId: string; answer: string }>;
+  status: string;
+}
+interface MarkingResult {
+  criteria: Record<string, { score: number; comment: string }>;
+  overall: { score: number; feedback: string };
+  awardedMarks?: number;
+  maxMarks?: number;
+  grade?: number;
+  gradeLabel?: string;
+}
+
 export default function AiMarkingPage() {
-  const [submissions, setSubmissions] = useState(mockSubmissions);
-  const [selectedSubmission, setSelectedSubmission] = useState(null);
-  const [markingResults, setMarkingResults] = useState({});
+  const [submissions, setSubmissions] = useState<Submission[]>(mockSubmissions);
+  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [markingResults, setMarkingResults] = useState<Record<string, MarkingResult>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showReport, setShowReport] = useState(false);
-  const [reportQuestionId, setReportQuestionId] = useState(null);
+  const [reportQuestionId, setReportQuestionId] = useState<string | null>(null);
 
-  const handleSelectSubmission = (submission) => {
+  const handleSelectSubmission = (submission: Submission) => {
     setSelectedSubmission(submission);
     setMarkingResults({});
   };
@@ -76,8 +92,8 @@ export default function AiMarkingPage() {
     }
   };
 
-  function handleReadReport(report: any) {
-    const text = `Overall Score: ${report.overall?.score}. Grade: ${report.grade} (${report.gradeLabel}). Feedback: ${report.overall?.feedback}. Criteria breakdown: ${Object.entries(report.criteria || {}).map(([crit, val]) => `${crit.replace('_', ' ')}: Score ${(val as any).score}, ${(val as any).comment}`).join('. ')}.`;
+  function handleReadReport(report: MarkingResult) {
+    const text = `Overall Score: ${report.overall?.score}. Grade: ${report.grade} (${report.gradeLabel}). Feedback: ${report.overall?.feedback}. Criteria breakdown: ${Object.entries(report.criteria || {}).map(([crit, val]) => `${crit.replace('_', ' ')}: Score ${val.score}, ${val.comment}`).join('. ')}.`;
     const utterance = new window.SpeechSynthesisUtterance(text);
     window.speechSynthesis.speak(utterance);
   }
@@ -100,9 +116,7 @@ export default function AiMarkingPage() {
                 >
                   <p className="font-semibold">{sub.studentName}</p>
                   <p className="text-sm text-gray-600">{sub.examTitle}</p>
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${sub.status === 'Marked' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                    {sub.status}
-                  </span>
+                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${sub.status === 'Marked' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{sub.status}</span>
                 </div>
               ))}
             </div>
@@ -128,9 +142,9 @@ export default function AiMarkingPage() {
                       <p className="bg-gray-50 p-3 rounded-md mb-3">{ans.answer}</p>
                       {markingResults[ans.questionId] && (
                         <div className="bg-blue-50 p-3 rounded-md">
-                          <p className="font-semibold text-blue-800">Overall Score: {(markingResults as any)[ans.questionId].overall?.score}</p>
-                          <p className="font-semibold text-green-700">Grade: {(markingResults as any)[ans.questionId].grade} ({(markingResults as any)[ans.questionId].gradeLabel})</p>
-                          <p className="text-sm text-blue-700">Feedback: {(markingResults as any)[ans.questionId].overall?.feedback}</p>
+                          <p className="font-semibold text-blue-800">Overall Score: {markingResults[ans.questionId].overall?.score}</p>
+                          <p className="font-semibold text-green-700">Grade: {markingResults[ans.questionId].grade} ({markingResults[ans.questionId].gradeLabel})</p>
+                          <p className="text-sm text-blue-700">Feedback: {markingResults[ans.questionId].overall?.feedback}</p>
                           <button
                             className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                             onClick={() => { setReportQuestionId(ans.questionId); setShowReport(true); }}
@@ -159,16 +173,16 @@ export default function AiMarkingPage() {
               {markingResults[reportQuestionId] && (
                 <div>
                   <div className="mb-4">
-                    <p className="font-semibold">Overall Score: {(markingResults as any)[reportQuestionId].overall?.score}</p>
-                    <p className="font-semibold text-green-700">Grade: {(markingResults as any)[reportQuestionId].grade} ({(markingResults as any)[reportQuestionId].gradeLabel})</p>
-                    <p className="text-sm">Feedback: {(markingResults as any)[reportQuestionId].overall?.feedback}</p>
+                    <p className="font-semibold">Overall Score: {markingResults[reportQuestionId].overall?.score}</p>
+                    <p className="font-semibold text-green-700">Grade: {markingResults[reportQuestionId].grade} ({markingResults[reportQuestionId].gradeLabel})</p>
+                    <p className="text-sm">Feedback: {markingResults[reportQuestionId].overall?.feedback}</p>
                   </div>
                   <div>
                     <h4 className="font-semibold mb-2">Criteria Breakdown:</h4>
                     <ul className="space-y-2">
-                      {Object.entries((markingResults as any)[reportQuestionId].criteria || {}).map(([crit, val]) => (
+                      {Object.entries(markingResults[reportQuestionId].criteria || {}).map(([crit, val]) => (
                         <li key={crit} className="border p-2 rounded">
-                          <span className="font-bold capitalize">{crit.replace('_', ' ')}:</span> Score: {(val as any).score}, <span className="italic">{(val as any).comment}</span>
+                          <span className="font-bold capitalize">{crit.replace('_', ' ')}:</span> Score: {val.score}, <span className="italic">{val.comment}</span>
                         </li>
                       ))}
                     </ul>
@@ -177,7 +191,7 @@ export default function AiMarkingPage() {
               )}
               <button
                 className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                onClick={() => handleReadReport((markingResults as any)[reportQuestionId])}
+                onClick={() => handleReadReport(markingResults[reportQuestionId])}
               >
                 AI Read Report
               </button>

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import exams from '@/data/exams.json';
 
 // This is a mock. Replace with real student results storage in production.
@@ -9,9 +9,8 @@ export async function GET() {
   const studentScores: Record<string, { name: string; totalScore: number; examsTaken: number }> = {};
 
   for (const exam of exams) {
-    // If exam.submissions does not exist, skip
-    if (!('submissions' in exam) || !Array.isArray((exam as any).submissions)) continue;
-    for (const submission of (exam as any).submissions) {
+    if (!('submissions' in exam) || !Array.isArray((exam as Record<string, unknown>).submissions)) continue;
+    for (const submission of (exam as { submissions: Array<{ studentName: string; score: number }> }).submissions) {
       const { studentName, score } = submission;
       if (!studentScores[studentName]) {
         studentScores[studentName] = { name: studentName, totalScore: 0, examsTaken: 0 };
