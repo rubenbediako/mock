@@ -66,9 +66,9 @@ export async function POST(req: NextRequest) {
     const generatedExam = JSON.parse(response.choices[0].message.content);
 
     return NextResponse.json(generatedExam);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in AI exam generation:', error);
-    const errorMessage = error.message || 'An unknown error occurred';
+    const errorMessage = (error as Error).message || 'An unknown error occurred';
     return NextResponse.json({ error: 'Failed to generate exam with AI', details: errorMessage }, { status: 500 });
   }
 }

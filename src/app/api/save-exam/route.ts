@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
               id: question.id || `q_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
               text: question.text,
               type: question.type,
-              options: question.options?.map((opt: any) => opt.text || opt) || [],
+              options: question.options?.map((opt: { text?: string }) => opt.text || opt) || [],
               correctAnswer: question.correctAnswer,
               marks: question.marks || 1,
               section: section.title

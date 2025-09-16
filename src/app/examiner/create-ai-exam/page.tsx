@@ -56,9 +56,9 @@ export default function CreateAiExamPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'success' | 'error' | null>(null);
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
-  const [newQuestion, setNewQuestion] = useState({
+  const [newQuestion, setNewQuestion] = useState<{ text: string; type: 'multiple-choice' | 'essay'; options: string[]; correctAnswer: string; marks: number; section: string }>({
     text: '',
-    type: 'multiple-choice' as 'multiple-choice' | 'essay',
+    type: 'multiple-choice',
     options: ['', '', '', ''],
     correctAnswer: '',
     marks: 1,
@@ -296,7 +296,7 @@ export default function CreateAiExamPage() {
                   />
                   <select
                     value={newQuestion.type}
-                    onChange={(e) => setNewQuestion({ ...newQuestion, type: e.target.value as any })}
+                    onChange={(e) => setNewQuestion({ ...newQuestion, type: e.target.value === 'multiple-choice' ? 'multiple-choice' : 'essay' })}
                     className="w-full p-2 border rounded-md"
                   >
                     <option value="multiple-choice">Multiple Choice</option>
