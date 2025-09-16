@@ -1,0 +1,53 @@
+[
+  {
+    "id": "exam_1758032628694_4i30e0tuv",
+    "title": "SOCIAL MOCK 1",
+    "subject": "General",
+    "createdBy": "examiner_1",
+    "createdAt": "2025-09-16T14:23:48.694Z",
+    "questions": [
+      {
+        "id": "question1",
+        "text": "Discuss the role of marriage in different cultures around the world.",
+        "type": "essay",
+        "options": [],
+        "marks": 10,
+        "section": "Essay Questions on Marriage"
+      },
+      {
+        "id": "question2",
+        "text": "Explain the historical evolution of marriage practices and laws.",
+        "type": "essay",
+        "options": [],
+        "marks": 10,
+        "section": "Essay Questions on Marriage"
+      },
+      {
+        "id": "question3",
+        "text": "Analyse the impact of gender roles on marriage dynamics in society.",
+        "type": "essay",
+        "options": [],
+        "marks": 10,
+        "section": "Essay Questions on Marriage"
+      },
+      {
+        "id": "question4",
+        "text": "Evaluate the significance of marriage in the institution of family.",
+        "type": "essay",
+        "options": [],
+        "marks": 10,
+        "section": "Essay Questions on Marriage"
+      },
+      {
+        "id": "question5",
+        "text": "Discuss the challenges faced by modern marriages and the role of social media in shaping marital relationships.",
+        "type": "essay",
+        "options": [],
+        "marks": 10,
+        "section": "Essay Questions on Marriage"
+      }
+    ],
+    "totalMarks": 50,
+    "duration": 120
+  }
+]
