@@ -18,6 +18,15 @@ function getCustomGrade(percent: number): { grade: number, label: string } {
   return { grade: 9, label: 'Lowest' };
 }
 
+interface MarkingResult {
+  criteria: Record<string, { score: number; comment: string }>;
+  overall: { score: number; feedback: string };
+  awardedMarks?: number;
+  maxMarks?: number;
+  grade?: number;
+  gradeLabel?: string;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { answers, criteria, totalMarks } = await req.json();
@@ -27,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     let totalAwardedMarks = 0;
-    const results = {};
+    const results: Record<string, MarkingResult> = {};
 
     for (const answer of answers) {
       const prompt = `
@@ -66,13 +75,13 @@ export async function POST(req: NextRequest) {
       });
 
       const content = response.choices[0].message.content ?? '{}';
-      const result = JSON.parse(content);
+      const result: MarkingResult = JSON.parse(content);
       // Use overall score as awarded marks for this question
       const awardedMarks = Math.round((result.overall?.score ?? 0) / 10 * (answer.marks ?? 0));
       totalAwardedMarks += awardedMarks;
       result.awardedMarks = awardedMarks;
       result.maxMarks = answer.marks ?? 0;
-      (results as any)[answer.questionId] = result;
+      results[answer.questionId] = result;
     }
 
     // Compute percent and grade for the whole exam
